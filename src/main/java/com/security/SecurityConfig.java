@@ -1,6 +1,8 @@
 package com.security;
 
 import com.security.user.UserModel;
+import com.security.user.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -20,6 +22,15 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+    private final UserService customUserDetailsService;
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public SecurityConfig(UserService customUserDetailsService, PasswordEncoder passwordEncoder) {
+        this.customUserDetailsService = customUserDetailsService;
+        this.passwordEncoder = passwordEncoder;
+    }
+
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -36,20 +47,13 @@ public class SecurityConfig {
         return http.build();
     }
 
-//    @Bean
-//    UserDetailsService user(){
-//        UserModel model = new UserModel();
-//        UserDetails user = User.builder()
-//                .username(model.getLogin())
-//                .password(passwordEncoder().encode(model.getPassword()))
-//                .roles(model.getRole())
-//                .build();
-//
-//        return new InMemoryUserDetailsManager(user);
-//    }
-
     @Bean
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    UserDetailsService userDetailsService() {
+        return customUserDetailsService;
     }
 }

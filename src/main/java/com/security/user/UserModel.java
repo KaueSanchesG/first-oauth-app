@@ -12,7 +12,7 @@ public class UserModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
-    private String login;
+    private String username;
     private String password;
     private String role;
 }
